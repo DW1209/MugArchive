@@ -1,0 +1,151 @@
+@import "tailwindcss";
+
+:root {
+  --bg-cream: #f9f7f2;
+
+  /* Starbucks-ish greens */
+  --sb-green: #00704a;
+  --sb-green-dark: #005c3d;
+
+  /* city dots */
+  --latte-gold: #c8a26e;
+  /* special dots */
+  --espresso: #3a2a1f;
+  /* label */
+  --ink: #374151;
+}
+
+body {
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.serif-font {
+  font-family: "Fraunces", ui-serif, Georgia, "Times New Roman", serif;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-cream);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Card effects */
+.card-shadow {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  transition: all 0.3s ease;
+}
+
+.card-shadow:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.collected-glow {
+  box-shadow: 0 0 0 2px var(--sb-green), 0 4px 6px -1px rgba(0, 112, 74, 0.2);
+}
+
+/* Map styles */
+.map-state {
+  fill: #e5e7eb;
+  stroke: var(--bg-cream);
+  stroke-width: 1;
+  transition: all 0.25s ease;
+  cursor: default;
+}
+
+.map-state:hover {
+  fill: #d1d5db;
+}
+
+/* "collected" = owned states */
+.map-state.collected {
+  fill: var(--sb-green);
+}
+
+.map-state.collected:hover {
+  fill: var(--sb-green-dark);
+}
+
+/* Markers */
+.map-city {
+  stroke: none;
+  cursor: default;
+  transition: transform 0.3s ease, opacity 0.3s ease, filter 0.3s ease;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+.map-city.collected {
+  fill: var(--latte-gold);
+}
+
+.map-city.special.collected {
+  fill: var(--espresso);
+}
+
+.map-city:hover {
+  transform: scale(1.2);
+}
+
+/* Labels */
+.map-city-label {
+  pointer-events: none;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: inherit;
+  fill: var(--ink);
+  text-anchor: middle;
+  opacity: 0;
+  transition: opacity 0.2s;
+
+  /* subtle outline for readability on map */
+  paint-order: stroke;
+  stroke: rgba(249, 247, 242, 0.85);
+  stroke-width: 1.4px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.map-city-group:hover .map-city-label {
+  opacity: 1;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.18s ease-out;
+}
+
+@media (max-width: 640px) {
+  body {
+    font-size: 14px;
+  }
+
+  .serif-font {
+    letter-spacing: -0.01em;
+  }
+}
