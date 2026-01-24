@@ -10,6 +10,19 @@ const SCALE = 1178.579402815456;
 const TX = 529.6326587316616;
 const TY = 125.8378903645527;
 
+const FIT_BASE_W = 1000;
+const FIT_BASE_H = 589;
+
+const FIT_DX = 11.111068725585938;
+const FIT_DY = 21.821496963500977;
+const FIT_SX = 970.63134765625 / FIT_BASE_W;
+const FIT_SY = 530.158935546875 / FIT_BASE_H;
+
+const fitXY = ({ x, y }) => ({
+  x: FIT_DX + x * FIT_SX,
+  y: FIT_DY + y * FIT_SY,
+});
+
 export function projectLatLonToSvgXY(lat, lon) {
   const phi = deg2rad(lat);
   const lam = deg2rad(lon);
@@ -63,5 +76,5 @@ const inRange = (lat, lon, g) => lat >= g.latMin && lat <= g.latMax && lon >= g.
 export function projectLatLonToUsMapXY(lat, lon) {
   if (inRange(lat, lon, AK_GEO)) return geoToBox(lat, lon, AK_SVG_BOX, AK_GEO, 8);
   if (inRange(lat, lon, HI_GEO)) return geoToBox(lat, lon, HI_SVG_BOX, HI_GEO, 6);
-  return projectLatLonToSvgXY(lat, lon);
+  return fitXY(projectLatLonToSvgXY(lat, lon));
 }
