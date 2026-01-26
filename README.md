@@ -172,12 +172,7 @@ Each mug in [src/data/mugs.js](src/data/mugs.js) is stored with the following in
 
 ## Future Enhancements
 Potential features for future versions:
-- Photo uploads for each mug
-- Purchase date and location tracking
-- Collection value estimation
-- Import/export collection data
 - Dark mode support
-- Share collection link with friends
 
 ## License
 This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
