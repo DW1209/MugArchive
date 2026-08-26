@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { MUG_DATA } from "./data/mugs";
+import { useMugs } from "./hooks/useMugs";
 
 import Header from "./components/Header";
 import ControlsBar from "./components/ControlsBar";
@@ -7,10 +7,11 @@ import USMap from "./components/USMap";
 import MugGrid from "./components/MugGrid";
 
 export default function App() {
+  const { mugs } = useMugs();
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCategory, setFilterCategory] = useState("All");
   const [viewMode, setViewMode] = useState("grid"); // 'grid' | 'map'
-  const ownedIds = useMemo(() => MUG_DATA.map((m) => m.id), []);
+  const ownedIds = useMemo(() => mugs.map((m) => m.id), [mugs]);
   const clearFilters = () => {
     setSearchTerm("");
     setFilterCategory("All");
@@ -18,16 +19,16 @@ export default function App() {
 
   const filteredMugs = useMemo(() => {
     const s = searchTerm.trim().toLowerCase();
-    return MUG_DATA.filter((m) => {
+    return mugs.filter((m) => {
       const matchesSearch = m.name.toLowerCase().includes(s);
       const matchesCategory = filterCategory === "All" || m.category === filterCategory;
       return matchesSearch && matchesCategory;
     });
-  }, [searchTerm, filterCategory]);
+  }, [mugs, searchTerm, filterCategory]);
 
   return (
     <div className="min-h-screen pb-20">
-      <Header items={MUG_DATA} />
+      <Header items={mugs} />
       <ControlsBar
         viewMode={viewMode}
         setViewMode={setViewMode}
@@ -39,7 +40,7 @@ export default function App() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {viewMode === "map" ? (
           <div className="animate-fade-in">
-            <USMap items={MUG_DATA} />
+            <USMap items={mugs} />
           </div>
         ) : (
           <MugGrid
