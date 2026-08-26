@@ -40,7 +40,7 @@ export default function App() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {viewMode === "map" ? (
           <div className="animate-fade-in">
-            <USMap items={mugs} />
+            <USMap items={filteredMugs} />
           </div>
         ) : (
           <MugGrid

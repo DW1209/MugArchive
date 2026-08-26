@@ -100,13 +100,33 @@ export default function USMap({ items = [] }) {
           </g>
         </svg>
         {tip && (
-          <div 
-          className="pointer-events-none absolute z-50 rounded-lg border border-gray-200 bg-white/90 px-3 py-2 shadow-lg backdrop-blur" 
+          <div
+          className="pointer-events-none absolute z-50 rounded-lg border border-gray-200 bg-white/90 px-3 py-2 shadow-lg backdrop-blur"
           style={{ left: tip.x, top: tip.y }}
           >
             <div className="font-semibold text-gray-900">{tip.label}</div>
           </div>
         )}
+      </div>
+
+      {/* Legend */}
+      <div className="mt-3 pt-3 border-t border-gray-100 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-semibold tracking-wide text-gray-600">
+        <div className="inline-flex items-center gap-2">
+          <span className="w-2.5 h-2.5 rounded-full bg-[var(--sb-green)]" />
+          State
+        </div>
+        <div className="inline-flex items-center gap-2">
+          <span className="w-2.5 h-2.5 rounded-full bg-[var(--latte-gold)]" />
+          City
+        </div>
+        <div className="inline-flex items-center gap-2">
+          <span className="w-2.5 h-2.5 rounded-full bg-[var(--espresso)]" />
+          Special
+        </div>
+        <div className="inline-flex items-center gap-2">
+          <span className="w-2.5 h-2.5 rounded-full bg-gray-200" />
+          Not Collected
+        </div>
       </div>
     </div>
   );
