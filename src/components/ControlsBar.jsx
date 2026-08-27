@@ -21,6 +21,10 @@ function useTabPositions(refsMap, keys) {
       setPositions(next);
     }
     measure();
+    // Re-measure once web fonts finish loading — the initial pass can run against
+    // a fallback font (wider/narrower than "Plus Jakarta Sans"), leaving the
+    // indicator sized for text that has since reflowed.
+    document.fonts?.ready.then(measure);
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
   }, [refsMap, keys]);
@@ -51,7 +55,7 @@ export default function ControlsBar({ viewMode, setViewMode, filterCategory, set
               key={c.key}
               ref={(el) => (tabRefs.current[c.key] = el)}
               onClick={() => setFilterCategory(c.key)}
-              className={`relative z-10 px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap transition-colors duration-300 ease-out ${
+              className={`relative z-10 flex-1 md:flex-none px-4 py-2 rounded-md text-sm font-medium text-center whitespace-nowrap transition-colors duration-300 ease-out ${
                 filterCategory === c.key ? "text-white" : "text-gray-600 hover:bg-gray-50"
               }`}
             >
