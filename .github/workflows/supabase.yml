@@ -1,0 +1,21 @@
+name: Supabase
+
+on:
+  schedule:
+    # Every 3 days, well inside Supabase's 7-day free-tier pause window.
+    - cron: "0 0 */3 * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Query mugs table
+        run: |
+          curl -sf "${VITE_SUPABASE_URL}/rest/v1/mugs?select=id&limit=1" \
+            -H "apikey: ${VITE_SUPABASE_ANON_KEY}" \
+            -H "Authorization: Bearer ${VITE_SUPABASE_ANON_KEY}" \
+            -o /dev/null
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
