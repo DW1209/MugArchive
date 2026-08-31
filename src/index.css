@@ -64,10 +64,11 @@ body {
   stroke: var(--bg-cream);
   stroke-width: 1;
   transition: all 0.25s ease;
-  cursor: default;
+  cursor: pointer;
 }
 
-.map-state:hover {
+.map-state:hover,
+.map-state.active {
   fill: #d1d5db;
 }
 
@@ -76,14 +77,18 @@ body {
   fill: var(--sb-green);
 }
 
-.map-state.collected:hover {
+.map-state.collected:hover,
+.map-state.collected.active {
   fill: var(--sb-green-dark);
 }
 
 /* Markers */
+.map-city-group {
+  cursor: pointer;
+}
+
 .map-city {
   stroke: none;
-  cursor: default;
   transition: transform 0.3s ease, opacity 0.3s ease, filter 0.3s ease;
   transform-origin: center;
   transform-box: fill-box;
@@ -97,7 +102,8 @@ body {
   fill: var(--espresso);
 }
 
-.map-city:hover {
+.map-city:hover,
+.map-city-group.active .map-city {
   transform: scale(1.2);
 }
 
@@ -120,7 +126,8 @@ body {
   stroke-linejoin: round;
 }
 
-.map-city-group:hover .map-city-label {
+.map-city-group:hover .map-city-label,
+.map-city-group.active .map-city-label {
   opacity: 1;
 }
 

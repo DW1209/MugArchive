@@ -5,6 +5,7 @@ import { projectLatLonToUsMapXY } from "../utils/projection";
 export default function USMap({ items = [] }) {
   const wrapRef = useRef(null);
   const [tip, setTip] = useState(null);
+  const [activeId, setActiveId] = useState(null);
 
   const showTip = useCallback((e, label) => {
     const el = wrapRef.current;
@@ -20,6 +21,26 @@ export default function USMap({ items = [] }) {
   }, []);
 
   const hideTip = useCallback(() => setTip(null), []);
+
+  // Tap-to-toggle for touch devices, where hover events don't fire.
+  const handleTap = useCallback(
+    (e, id, label) => {
+      e.stopPropagation();
+      if (activeId === id) {
+        setActiveId(null);
+        hideTip();
+        return;
+      }
+      setActiveId(id);
+      showTip(e, label);
+    },
+    [activeId, showTip, hideTip]
+  );
+
+  const clearActive = useCallback(() => {
+    setActiveId(null);
+    hideTip();
+  }, [hideTip]);
   const ownedStateSet = useMemo(() => {
     return new Set(items.filter((m) => m.category === "State").map((m) => m.id));
   }, [items]);
@@ -66,7 +87,7 @@ export default function USMap({ items = [] }) {
     <div ref={wrapRef} className="relative w-full overflow-hidden bg-white/50 rounded-xl border border-gray-100 p-3 sm:p-4 shadow-inner">
       {/* On small screens, allow horizontal scroll instead of shrinking too much */}
       <div className="w-full overflow-x-auto overflow-y-hidden">
-        <svg viewBox="0 0 1000 589" className="block w-full h-auto min-w-[760px] sm:min-w-0">
+        <svg viewBox="0 0 1000 589" className="block w-full h-auto min-w-[760px] sm:min-w-0" onClick={clearActive}>
           {/* States */}
           <g>
             {US_STATES.map((s) => {
@@ -75,10 +96,11 @@ export default function USMap({ items = [] }) {
                 <path
                   key={s.id}
                   d={s.d}
-                  className={`map-state ${owned ? "collected" : ""}`}
+                  className={`map-state ${owned ? "collected" : ""} ${activeId === s.id ? "active" : ""}`}
                   onMouseEnter={(e) => showTip(e, s.n)}
                   onMouseMove={(e) => showTip(e, s.n)}
                   onMouseLeave={hideTip}
+                  onClick={(e) => handleTap(e, s.id, s.n)}
                 />
               );
             })}
@@ -88,11 +110,21 @@ export default function USMap({ items = [] }) {
           <g>
             {markers.map((m) => {
               const isSpecial = m.category === "Special";
+              const label = m.isGroup ? `${m.name} (${m.count})` : m.name;
               return (
-                <g key={m.id} className="map-city-group">
+                <g
+                  key={m.id}
+                  className={`map-city-group ${activeId === m.id ? "active" : ""}`}
+                  onMouseEnter={(e) => showTip(e, label)}
+                  onMouseMove={(e) => showTip(e, label)}
+                  onMouseLeave={hideTip}
+                  onClick={(e) => handleTap(e, m.id, label)}
+                >
+                  {/* Enlarged invisible hit area so the marker is easy to tap on touch screens */}
+                  <circle cx={m.x} cy={m.y} r={12} fill="transparent" />
                   <circle cx={m.x} cy={m.y} r={5} className={`map-city collected ${isSpecial ? "special" : ""}`} />
                   <text x={m.x} y={m.y - (m.isGroup ? 12 : 10)} className="map-city-label">
-                    {m.isGroup ? `${m.name} (${m.count})` : m.name}
+                    {label}
                   </text>
                 </g>
               );
