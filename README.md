@@ -1,68 +1,40 @@
 # MugArchive
-A modern, interactive React web app for tracking and exploring your Starbucks Discovery Series Ornaments collection. This project visualizes your collection on an interactive US map, lets you browse by category, and displays beautiful mug cards.
 
-## Website
-- https://dw1209.github.io/MugArchive/
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Deploy](https://img.shields.io/github/actions/workflow/status/DW1209/MugArchive/deploy.yml?branch=main&label=deploy)](https://github.com/DW1209/MugArchive/actions/workflows/deploy.yml)
+[![Last Commit](https://img.shields.io/github/last-commit/DW1209/MugArchive)](https://github.com/DW1209/MugArchive/commits/main)
+![React](https://img.shields.io/badge/React-19.2-61DAFB?logo=react&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-7.2-646CFF?logo=vite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?logo=tailwindcss&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-Postgres-3ECF8E?logo=supabase&logoColor=white)
 
-## Features
-- **Interactive US Map**
-  - Hover a state to highlight it and show the state name
-  - Visual markers for cities and special locations
-  - See your entire collection plotted geographically
-- **Collection Dashboard**
-  - Shows total item count and category breakdown
-  - Live stats: States, Cities, and Special items
-- **Smart Filtering**
-  - Search by mug name
-  - Filter by category: All / States / Cities / Special
-  - Quick clear filters option
-- **Dual View Modes**
-  - **Grid View**: Browse beautiful cards with details
-  - **Map View**: Visualize your collection geographically
-- **Beautiful Mug Cards**
-  - Category badges with color coding
-  - State abbreviations for state mugs
-  - Location context (state or group)
-  - Clean, modern design with hover effects
-- **Responsive UI**
-  - Desktop: Full-featured interface with optimized layout
-  - Mobile/tablet: Touch-friendly interactions
-  - Smooth transitions and animations
+> A modern, interactive collector's app for tracking your Starbucks Discovery Series mug collection.
 
-## Tech Stack
-- Vite: `^7.2.4`
-- React: `^19.2.0`
-- React DOM: `^19.2.0`
-- Tailwind CSS: `^4.1.18`
-- Icons: `lucide-react ^0.563.0`
-- ESLint (flat config) with React Hooks + React Refresh plugins
+![MugArchive Screenshot](.github/assets/screenshot.png)
 
-## Project Structure
-```
-├── public/
-│   └── mug.png                     # Tab icon
-├── src/
-│   ├── components/
-│   │   ├── ControlsBar.jsx         # Search and filter controls
-│   │   ├── Header.jsx              # Application header with stats
-│   │   ├── MugCard.jsx             # Individual mug card component
-│   │   ├── MugGrid.jsx             # Grid layout for mug cards
-│   │   └── USMap.jsx               # Interactive US map
-│   ├── data/
-│   │   ├── mugs.js                 # Starbucks mugs dataset
-│   │   └── usStates.js             # US states data
-│   ├── utils/
-│   │   └── projection.js           # Coordinate projection (lat/lon to map)
-│   ├── main.jsx                    # React entry point
-│   ├── App.jsx                     # Root application component
-│   └── index.css                   # Global styles
-├── index.html                      # HTML entry point
-├── package.json                    # Dependencies and scripts
-├── vite.config.js                  # Vite configuration
-└── eslint.config.js                # ESLint configuration
-```
+🔗 **Live demo:** [dw1209.github.io/MugArchive](https://dw1209.github.io/MugArchive/)
 
-## Getting Started
+## ✨ Features
+- 🗺️ **Interactive US Map** — hover or tap states and markers, with a legend
+- 🖼️ **Grid View** — browse mug cards with category badges, state abbreviations, and location context
+- 🔄 **Dual View Modes** — Grid and Map, switched via an animated segmented toggle
+- 🔍 **Smart Filtering** — search by name and filter by category, synced across both views
+- 📊 **Collection Dashboard** — total item count and category breakdown at a glance
+- 📱 **Responsive UI** — layout adapts across mobile and desktop
+
+## 🛠️ Tech Stack
+| Category | Technology |
+|---|---|
+| Framework | React `^19.2.0` (React DOM `^19.2.0`) |
+| Build tool | Vite `^7.2.4` |
+| Styling | Tailwind CSS v4 (`@tailwindcss/vite`, no `tailwind.config.js`) |
+| Backend / data | Supabase `@supabase/supabase-js ^2.112.4` — hosted Postgres + auto REST API |
+| Icons | lucide-react `^0.563.0` |
+| Linting | ESLint — React Hooks + React Refresh plugins |
+
+The frontend stays a static site on GitHub Pages; mug data is served from a Supabase Postgres table and fetched at runtime. If Supabase is unconfigured or unreachable, the app falls back to the dataset bundled in `src/data/mugs.js`, so it always runs.
+
+## 🚀 Getting Started
 ### Prerequisites
 - Node.js: `20.19+`
 - npm package manager
@@ -77,106 +49,115 @@ cd MugArchive
 ```bash
 npm install
 ```
-3. Start the development server:
+3. Configure Supabase — optional, skip it and the app runs against the bundled `src/data/mugs.js` dataset instead:
+
+   <details>
+   <summary>🗄️ Backend setup (Supabase)</summary>
+
+   Data is served from a Supabase Postgres table. To stand up your own:
+   1. Create a free Supabase project; note its **Project URL**, **anon** key, and **service_role** key (Project Settings → API).
+   2. Run `supabase/schema.sql` in the Supabase SQL editor to create the `mugs` table and its read-only RLS policy.
+   3. Seed the table from the bundled dataset (the service_role key bypasses RLS — keep it secret, never commit it):
+      ```bash
+      SUPABASE_URL=https://your-project.supabase.co \
+      SUPABASE_SERVICE_ROLE_KEY=your-service-role-key \
+      node scripts/seed.mjs
+      ```
+   4. Put the **Project URL** and **anon** key in `.env.local` for local dev (copy `.env.example` first: `cp .env.example .env.local`).
+   5. For the deployed site, add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` as repository **Actions secrets** (Settings → Secrets and variables → Actions). The deploy workflow injects them at build time. The anon key is safe to expose publicly because the table is read-only via RLS.
+
+   </details>
+
+4. Start the development server:
 ```bash
 npm run dev
 ```
-The application will be available at `http://localhost:5173/`
+The application will be available at `http://localhost:5173/MugArchive/`
 
-## Available Scripts
-- `npm run dev` - Start the development server with hot module replacement
-- `npm run build` - Build the project for production
-- `npm run preview` - Preview the production build locally
-- `npm run lint` - Run ESLint to check code quality
+## 📜 Available Scripts
+- `npm run dev` — Start the development server with hot module replacement
+- `npm run build` — Build the project for production
+- `npm run preview` — Preview the production build locally
+- `npm run lint` — Run ESLint to check code quality
 
-## Key Features
-### Interactive Map
-The application features an interactive SVG map of the United States. Users can:
-- Hover over states to see state names
-- View city and special location markers plotted by coordinates
-- Toggle between grid and map views seamlessly
-- Visualize the geographic distribution of their collection
+## 🧩 Data Customization
+The live data source is the Supabase `mugs` table — there is no in-app write UI or auth, so all editing happens directly in the Supabase Studio table editor (enforced by RLS: a `select`-only policy, no insert/update/delete policy exists at all). Category determines the required fields:
+- `State`: just `id` (two-letter state code) and `name`.
+- `City`: needs `stateId`, `lat`, `lon`.
+- `Special`: needs `lat`, `lon`; `group` is optional and clusters multiple entries into a single map marker.
 
-### Category System
-Three main categories organize the collection:
-- **States**: State-themed mugs with abbreviation badges
-- **Cities**: City-specific mugs with geographic coordinates
-- **Special**: Special edition mugs (Disney World parks, Universal Studios, etc.)
+`src/data/mugs.js` mirrors this dataset and acts as the seed source (`scripts/seed.mjs`) and offline fallback. Keep it in sync if you want the fallback to match, and re-run the seed script to rebuild the table.
 
-### Smart Search & Filtering
-The controls bar provides:
-- Real-time search across all mug names
-- Category filtering with live count updates
-- One-click filter clearing
-- View mode toggle (grid/map)
+## 📚 Additional Documentation
 
-### Responsive Layout
-The interface adapts to different screen sizes:
-- Desktop: Full-featured interface with optimal spacing
-- Tablet: Touch-optimized controls and cards
-- Mobile: Compact layout with smooth animations
-- Smooth view transitions with fade animations
+<details>
+<summary>🗂️ Project structure</summary>
 
-## Data Customization
-Users can edit the mugs dataset in [src/data/mugs.js](src/data/mugs.js) to update their collection:
-- Add new mugs to track
-- Update categories and names
-- Set coordinates for city/special locations
-- Organize by groups (e.g., Disney World collection)
-
-## Data Structure
-Each mug in [src/data/mugs.js](src/data/mugs.js) is stored with the following information:
-- **id**: Unique identifier (slug or state code)
-- **name**: Mug name/location
-- **category**: "State", "City", or "Special"
-- **stateId**: (Optional) Associated state code for cities/special items
-- **lat/lon**: (Optional) Geographic coordinates for map plotting
-- **group**: (Optional) Collection group name (e.g., "Disney World")
-
-### Example Data Entries
-```javascript
-// State Mug
-{ 
-  id: "CA", 
-  name: "California", 
-  category: "State"
-}
-
-// City Mug
-{ 
-  id: "san-francisco", 
-  name: "San Francisco", 
-  category: "City", 
-  stateId: "CA", 
-  lat: 37.774929, 
-  lon: -122.419418 
-}
-
-// Special Mug
-{ 
-  id: "disney-world-magic-kingdom", 
-  name: "Magic Kingdom", 
-  category: "Special", 
-  group: "Disney World", 
-  stateId: "FL", 
-  lat: 28.4177, 
-  lon: -81.5812 
-}
+```
+├── public/
+│   └── mug.png                     # Tab icon
+├── src/
+│   ├── components/
+│   │   ├── ControlsBar.jsx         # Search, category filter, and view toggle
+│   │   ├── Header.jsx              # Application header with stats
+│   │   ├── MugCard.jsx             # Individual mug card component
+│   │   ├── MugGrid.jsx             # Grid layout for mug cards
+│   │   └── USMap.jsx               # Interactive US map + legend
+│   ├── data/
+│   │   ├── mugs.js                 # Mugs dataset (Supabase seed source + offline fallback)
+│   │   └── usStates.js             # US states data (static, frontend-only)
+│   ├── hooks/
+│   │   └── useMugs.js              # Fetches mugs from Supabase (realtime), falls back to mugs.js
+│   ├── lib/
+│   │   └── supabase.js             # Supabase client (configured from VITE_SUPABASE_* env vars)
+│   ├── utils/
+│   │   └── projection.js           # Coordinate projection (lat/lon to map)
+│   ├── main.jsx                    # React entry point
+│   ├── App.jsx                     # Root application component
+│   └── index.css                   # Global styles
+├── scripts/
+│   └── seed.mjs                    # One-time: seed the Supabase mugs table from mugs.js
+├── supabase/
+│   └── schema.sql                  # mugs table schema + read-only RLS policy
+├── .env.example                    # Template for Supabase env vars (copy to .env.local)
+├── index.html                      # HTML entry point
+├── package.json                    # Dependencies and scripts
+├── vite.config.js                  # Vite configuration
+└── eslint.config.js                # ESLint configuration
 ```
 
-## Browser Support
-- Chrome/Edge
-- Firefox
-- Safari
-- Mobile browsers (iOS Safari, Chrome Mobile)
+</details>
 
-## Future Enhancements
-Potential features for future versions:
-- Dark mode support
+<details>
+<summary>🗃️ Data structure</summary>
 
-## License
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+Each mug, as consumed by the app (the shape returned by `useMugs`, mirrored in `src/data/mugs.js`), holds the following fields:
 
-## Data Attribution
+| Field | Description |
+|---|---|
+| `id` | Unique identifier (slug or state code) |
+| `name` | Mug name/location |
+| `category` | `"State"`, `"City"`, or `"Special"` |
+| `stateId` | (Optional) Associated state code for cities/special items |
+| `lat`/`lon` | (Optional) Geographic coordinates for map plotting |
+| `group` | (Optional) Collection group name (e.g., "Disney World") that clusters entries into a single map marker |
+
+</details>
+
+<details>
+<summary>🌐 Browser support</summary>
+
+Tested and working in Chrome/Edge, Firefox, and Safari, including mobile (iOS Safari, Chrome Mobile).
+
+</details>
+
+<details>
+<summary>🎨 Map data attribution</summary>
+
 - Base SVG map is sourced from [amCharts SVG Maps](https://www.amcharts.com/svg-maps/)
 - Starbucks Discovery Series is a trademark of Starbucks Corporation
+
+</details>
+
+## 📄 License
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
